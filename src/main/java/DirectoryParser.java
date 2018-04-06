@@ -12,7 +12,6 @@ public class DirectoryParser {
 
     private static void parseDirectory(final String directory) {
         try {
-
             Stream<Path> paths = Files.walk(Paths.get(directory)).filter(Files::isRegularFile);
             Optional<Path> path = paths.filter(e -> e.getFileName().toString().contains(PRODUCT_MASTER)).findFirst();
             if (path.isPresent()) {
