@@ -1,0 +1,59 @@
+gensrc/
+classes/
+eclipsebin/
+addons/
+addonsrc/
+commonwebsrc/
+hybris/*
+**/mclstorefront/web/webroot/_ui/responsive/theme-*/css
+**/mclstorefront/web/webroot/_ui/responsive/theme-*/fonts
+**/mclstorefront/web/webroot/_ui/responsive/common/js
+**/mclstorefront/web/webroot/_ui/responsive/common/datetimepicker
+
+# The way to modify these files is to modify the generateVariables.properties file first,
+# then run ant build to regenerate these three files.
+**/mclstorefront/web/webroot/WEB-INF/_ui-src/shared/less/generatedVariables.less
+**/mclstorefront/web/webroot/WEB-INF/tags/shared/variables/generatedVariables.tag
+**/mclstorefront/web/webroot/_ui/shared/js/generatedVariables.js
+
+
+**/node_modules/**
+**/node_modules
+
+/licenses*
+*README*
+*readme*
+*-testclasses.xml
+/pom.xml
+
+*.class
+*platformhome.properties
+*.pmd
+*.springBeans
+*.prefs
+*.launch
+hmc.xsd
+*hmc.jar
+*.log
+*.classpath
+*testclasses.xml
+.java-version
+
+# IntelliJ files #
+.idea/
+*.iml
+*.eml
+.DS_Store
+
+# JRebel files #
+rebel.xml
+
+# Merge Files #
+*.BASE
+*.LOCAL
+*.REMOTE
+
+RemoteSystemsTempFiles/
+.metadata/
+hybris-all-*
+Jenkinsfile-*
