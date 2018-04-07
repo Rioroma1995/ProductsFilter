@@ -4,6 +4,8 @@ import java.io.*;
 import java.nio.file.*;
 
 public class CategoryProductParser {
+    private static final Integer CATALOG_ATTR = 2;
+
     public void parseFile(Path path, String catalogName) throws IOException {
         try (Reader reader = Files.newBufferedReader(path);
              CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
@@ -11,7 +13,7 @@ public class CategoryProductParser {
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL)
         ) {
             for (CSVRecord csvRecord : csvParser) {
-                if (csvRecord.get(2).contains(catalogName)) {
+                if (csvRecord.get(CATALOG_ATTR).contains(catalogName)) {
                     csvPrinter.printRecord(csvRecord);
                 }
             }

@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ProductMasterParser {
+    private static final Integer VERSION_PRODUCT_ATTR = 0;
+    private static final Integer ORIGINAL_PRODUCT_ATTR = 1;
+    private static final Integer CATALOG_ATTR = 12;
     private Set<String> productVersions;
     private Set<String> originalProducts;
 
@@ -22,9 +25,9 @@ public class ProductMasterParser {
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL)
         ) {
             for (CSVRecord csvRecord : csvParser) {
-                if (csvRecord.get(12).contains(catalogName)) {
-                    productVersions.add(csvRecord.get(0));
-                    originalProducts.add(csvRecord.get(1));
+                if (csvRecord.get(CATALOG_ATTR).contains(catalogName)) {
+                    productVersions.add(csvRecord.get(VERSION_PRODUCT_ATTR));
+                    originalProducts.add(csvRecord.get(ORIGINAL_PRODUCT_ATTR));
                     csvPrinter.printRecord(csvRecord);
                 }
             }
