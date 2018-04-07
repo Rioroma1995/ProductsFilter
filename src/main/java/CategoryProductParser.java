@@ -2,9 +2,17 @@ import org.apache.commons.csv.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CategoryProductParser {
+    private static final Integer CATEGORY_ATTR = 1;
     private static final Integer CATALOG_ATTR = 2;
+    private Set<String> categories;
+
+    CategoryProductParser() {
+        categories = new HashSet<>();
+    }
 
     public void parseFile(Path path, String catalogName) throws IOException {
         try (Reader reader = Files.newBufferedReader(path);
@@ -14,10 +22,19 @@ public class CategoryProductParser {
         ) {
             for (CSVRecord csvRecord : csvParser) {
                 if (csvRecord.get(CATALOG_ATTR).contains(catalogName)) {
+                    categories.add(csvRecord.get(CATEGORY_ATTR));
                     csvPrinter.printRecord(csvRecord);
                 }
             }
             csvPrinter.flush();
         }
+    }
+
+    public Set<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<String> categories) {
+        this.categories = categories;
     }
 }
