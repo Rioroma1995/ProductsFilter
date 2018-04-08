@@ -20,7 +20,6 @@ public class ProductMasterParser {
     public void parseFile(Path path, final String targetDirectory, String catalogName) throws IOException {
         try (Reader reader = Files.newBufferedReader(path);
              CSVParser csvParser = new CSVParser(reader, CSVFormat.EXCEL);
-
              BufferedWriter writer = Files.newBufferedWriter(Paths.get(targetDirectory + path.getFileName()));
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL)
         ) {
