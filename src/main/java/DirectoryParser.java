@@ -5,9 +5,12 @@ import java.util.stream.Collectors;
 
 public class DirectoryParser {
     private static final String CATALOG_NAME = "mcLaundryProductCatalog";
+    //file names
     private static final String PRODUCT_MASTER = "productmaster";
     private static final String CATEGORY_PRODUCT = "categoryproduct";
     private static final String CATEGORIES = "categories";
+    private static final String PRODUCT_CLASSIFICATIONS = "product_classifications";
+
     private static final String SOURCE_DIRECTORY = "source.directory";
     private static final String TARGET_DIRECTORY = "target.directory";
 
@@ -40,6 +43,12 @@ public class DirectoryParser {
                         for (Path path : categoriesPath) {
                             categoriesParser.parseFile(path, targetDirectory, CATALOG_NAME, categoryProdParser.getCategories());
                         }
+                    }
+
+                    Optional<Path> productClassificationsPath = paths.stream().filter(e -> e.getFileName().toString().contains(PRODUCT_CLASSIFICATIONS)).findFirst();
+                    if (productClassificationsPath.isPresent()) {
+                        ProductClassificationsParser productClassificationsParser = new ProductClassificationsParser();
+                        productClassificationsParser.parseFile(productClassificationsPath.get(), targetDirectory, prodMastParser.getProductVersions(), prodMastParser.getOriginalProducts());
                     }
                 }
             }
