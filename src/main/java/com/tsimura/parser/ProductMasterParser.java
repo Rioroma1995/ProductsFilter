@@ -1,3 +1,5 @@
+package com.tsimura.parser;
+
 import org.apache.commons.csv.*;
 
 import java.io.*;
