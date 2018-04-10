@@ -1,4 +1,4 @@
-package com.tsimura.parser;
+package com.tmg.parser;
 
 import org.apache.commons.csv.*;
 

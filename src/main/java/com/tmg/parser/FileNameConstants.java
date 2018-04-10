@@ -1,4 +1,4 @@
-package com.tsimura.parser;
+package com.tmg.parser;
 
 public class FileNameConstants {
     static final String PRODUCT_MASTER = "productmaster";

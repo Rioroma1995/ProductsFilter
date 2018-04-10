@@ -1,4 +1,4 @@
-package com.tsimura.parser;
+package com.tmg.parser;
 
 import java.io.*;
 import java.nio.file.*;
