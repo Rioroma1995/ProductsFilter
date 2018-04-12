@@ -24,7 +24,6 @@ hybris/*
 *README*
 *readme*
 *-testclasses.xml
-/pom.xml
 
 *.class
 *platformhome.properties
