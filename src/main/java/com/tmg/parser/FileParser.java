@@ -4,23 +4,20 @@ import org.apache.commons.csv.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.tmg.parser.FileNameConstants.*;
 
 public class FileParser {
     private final String targetDirectory;
     private final String catalogName;
-    private Set<String> productVersions;
-    private Set<String> originalProducts;
-    private Set<String> categories;
+    private Set<String> variantProducts;
+    private Set<String> baseProducts;
     private Set<String> classifications;
 
     FileParser(final String targetDirectory, String catalogName) {
-        productVersions = new HashSet<>();
-        originalProducts = new HashSet<>();
-        categories = new HashSet<>();
+        variantProducts = new HashSet<>();
+        baseProducts = new HashSet<>();
         classifications = new HashSet<>();
         this.catalogName = catalogName;
         this.targetDirectory = targetDirectory;
@@ -28,12 +25,13 @@ public class FileParser {
 
     public void parseFile(Path path) {
         try (Reader reader = Files.newBufferedReader(path);
-             CSVParser csvParser = new CSVParser(reader, CSVFormat.EXCEL);
+             CSVParser csvParser = new CSVParser(reader, CSVFormat.EXCEL.withQuote('"').withQuoteMode(QuoteMode.ALL));
              BufferedWriter writer = Files.newBufferedWriter(Paths.get(targetDirectory + path.getFileName()));
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL)) {
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL.withQuote('"').withQuoteMode(QuoteMode.ALL))) {
             chooseParser(path.getFileName().toString(), csvParser, csvPrinter);
             csvPrinter.flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            System.out.println("File was: " + path);
             e.printStackTrace();
         }
     }
@@ -59,34 +57,42 @@ public class FileParser {
     }
 
     private void parseProductMaster(CSVParser csvParser, CSVPrinter csvPrinter) throws IOException {
-        final Integer VERSION_PRODUCT_ATTR = 0;
-        final Integer ORIGINAL_PRODUCT_ATTR = 1;
+        final Integer VARIANT_PRODUCT_ATTR = 0;
+        final Integer BASE_PRODUCT_ATTR = 1;
         final Integer CATALOG_ATTR = 12;
         for (CSVRecord csvRecord : csvParser) {
-            if (csvRecord.get(CATALOG_ATTR).contains(catalogName)) {
-                productVersions.add(csvRecord.get(VERSION_PRODUCT_ATTR));
-                originalProducts.add(csvRecord.get(ORIGINAL_PRODUCT_ATTR));
-                csvPrinter.printRecord(csvRecord);
+            if (csvRecord.get(CATALOG_ATTR).contains(this.catalogName)) {
+                variantProducts.add(csvRecord.get(VARIANT_PRODUCT_ATTR));
+                baseProducts.add(csvRecord.get(BASE_PRODUCT_ATTR));
+
+                final Collection<String> newRow = new ArrayList<>(csvRecord.size());
+                Integer currentCol = 0;
+                for(String columnValue: csvRecord) {
+                    if (!Objects.equals(currentCol, CATALOG_ATTR)) {
+                        newRow.add(columnValue);
+                    } else {
+                        newRow.add(this.catalogName);
+                    }
+                    ++currentCol;
+                }
+                csvPrinter.printRecord(newRow);
             }
         }
     }
 
     private void parseCategoryProduct(CSVParser csvParser, CSVPrinter csvPrinter) throws IOException {
-        final Integer CATEGORY_ATTR = 1;
         final Integer CATALOG_ATTR = 2;
         for (CSVRecord csvRecord : csvParser) {
             if (csvRecord.get(CATALOG_ATTR).contains(catalogName)) {
-                categories.add(csvRecord.get(CATEGORY_ATTR));
                 csvPrinter.printRecord(csvRecord);
             }
         }
     }
 
     private void parseCategories(CSVParser csvParser, CSVPrinter csvPrinter) throws IOException {
-        final Integer CATEGORY_ATTR = 0;
         final Integer CATALOG_ATTR = 3;
         for (CSVRecord csvRecord : csvParser) {
-            if (csvRecord.get(CATALOG_ATTR).contains(catalogName) && categories.contains(csvRecord.get(CATEGORY_ATTR))) {
+            if (csvRecord.get(CATALOG_ATTR).contains(catalogName)) {
                 csvPrinter.printRecord(csvRecord);
             }
         }
@@ -96,7 +102,7 @@ public class FileParser {
         final Integer PRODUCT_ATTR = 0;
         final Integer CLASSIFICATION_ATTR = 2;
         for (CSVRecord csvRecord : csvParser) {
-            if (productVersions.contains(csvRecord.get(PRODUCT_ATTR)) || originalProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
+            if (variantProducts.contains(csvRecord.get(PRODUCT_ATTR)) || baseProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
                 classifications.add(csvRecord.get(CLASSIFICATION_ATTR));
                 csvPrinter.printRecord(csvRecord);
             }
@@ -115,7 +121,7 @@ public class FileParser {
     private void parseProductFeature(CSVParser csvParser, CSVPrinter csvPrinter) throws IOException {
         final Integer PRODUCT_ATTR = 0;
         for (CSVRecord csvRecord : csvParser) {
-            if (productVersions.contains(csvRecord.get(PRODUCT_ATTR)) || originalProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
+            if (variantProducts.contains(csvRecord.get(PRODUCT_ATTR)) || baseProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
                 csvPrinter.printRecord(csvRecord);
             }
         }
@@ -125,20 +131,22 @@ public class FileParser {
         final Integer PRODUCT_ATTR = 0;
         final Integer PRODUCT_REFERENCE_ATTR = 2;
         for (CSVRecord csvRecord : csvParser) {
-            if (productVersions.contains(csvRecord.get(PRODUCT_ATTR)) || productVersions.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR))
-                    || originalProducts.contains(csvRecord.get(PRODUCT_ATTR)) || originalProducts.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR))) {
+            if (variantProducts.contains(csvRecord.get(PRODUCT_ATTR)) || variantProducts.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR))
+                    || baseProducts.contains(csvRecord.get(PRODUCT_ATTR)) || baseProducts.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR))) {
                 csvPrinter.printRecord(csvRecord);
             }
         }
     }
 
     private void parseProductSecondary(final CSVParser csvParser, final CSVPrinter csvPrinter) throws IOException {
+        // TO fix
         final Integer PRODUCT_VERSION_ATTR = 0;
         final Integer PRODUCT_ATTR = 1;
         for (CSVRecord csvRecord : csvParser) {
-            if (productVersions.contains(csvRecord.get(PRODUCT_VERSION_ATTR)) || originalProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
+            if (variantProducts.contains(csvRecord.get(PRODUCT_VERSION_ATTR)) || baseProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
                 csvPrinter.printRecord(csvRecord);
             }
         }
     }
+
 }
