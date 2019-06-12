@@ -53,6 +53,10 @@ public class FileParser {
             parseProductReference(csvParser, csvPrinter);
         } else if (fileName.contains(PRODUCT_SECONDARY)) {
             parseProductSecondary(csvParser, csvPrinter);
+        } else if (fileName.contains(PRODUCT_PRICE)) {
+            parseProductPrice(csvParser, csvPrinter);
+        } else if (fileName.contains(PRODUCT_SALES)) {
+            parseProductSales(csvParser, csvPrinter);
         }
     }
 
@@ -127,12 +131,21 @@ public class FileParser {
         }
     }
 
+    private void parseProductPrice(final CSVParser csvParser, final CSVPrinter csvPrinter) throws IOException {
+        final Integer PRODUCT_ATTR = 0;
+        for (CSVRecord csvRecord : csvParser) {
+            if (this.variantProducts.contains(csvRecord.get(PRODUCT_ATTR)) || this.baseProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
+                csvPrinter.printRecord(csvRecord);
+            }
+        }
+    }
+
     private void parseProductReference(CSVParser csvParser, CSVPrinter csvPrinter) throws IOException {
         final Integer PRODUCT_ATTR = 0;
         final Integer PRODUCT_REFERENCE_ATTR = 2;
         for (CSVRecord csvRecord : csvParser) {
-            if (variantProducts.contains(csvRecord.get(PRODUCT_ATTR)) || variantProducts.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR))
-                    || baseProducts.contains(csvRecord.get(PRODUCT_ATTR)) || baseProducts.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR))) {
+            if ((variantProducts.contains(csvRecord.get(PRODUCT_ATTR)) || variantProducts.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR)))
+                    && (baseProducts.contains(csvRecord.get(PRODUCT_ATTR)) || baseProducts.contains(csvRecord.get(PRODUCT_REFERENCE_ATTR)))) {
                 csvPrinter.printRecord(csvRecord);
             }
         }
@@ -144,6 +157,15 @@ public class FileParser {
         final Integer PRODUCT_ATTR = 1;
         for (CSVRecord csvRecord : csvParser) {
             if (variantProducts.contains(csvRecord.get(PRODUCT_VERSION_ATTR)) || baseProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
+                csvPrinter.printRecord(csvRecord);
+            }
+        }
+    }
+
+    private void parseProductSales(final CSVParser csvParser, final CSVPrinter csvPrinter) throws IOException {
+        final Integer PRODUCT_ATTR = 0;
+        for (CSVRecord csvRecord : csvParser) {
+            if (this.variantProducts.contains(csvRecord.get(PRODUCT_ATTR)) || this.baseProducts.contains(csvRecord.get(PRODUCT_ATTR))) {
                 csvPrinter.printRecord(csvRecord);
             }
         }

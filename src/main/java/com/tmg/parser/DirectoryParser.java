@@ -3,11 +3,14 @@ package com.tmg.parser;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class DirectoryParser {
-    private static final String CATALOG_NAME = "mcLaundryProductCatalog";
+    private static final String CATALOG_NAME = "kitchenAidProductCatalog";
     private static final String SOURCE_DIRECTORY = "source.directory";
     private static final String TARGET_DIRECTORY = "target.directory";
 
@@ -65,6 +68,16 @@ public class DirectoryParser {
 
                     List<Path> productFeaturePath = paths.stream().filter(e -> e.getFileName().toString().contains(FileNameConstants.PRODUCT_FEATURE)).collect(Collectors.toList());
                     for (Path path : productFeaturePath) {
+                        fileParser.parseFile(path);
+                    }
+
+                    final List<Path> productPriceFilesPath = paths.stream().filter(e -> e.getFileName().toString().contains(FileNameConstants.PRODUCT_PRICE)).collect(Collectors.toList());
+                    for (Path path : productPriceFilesPath) {
+                        fileParser.parseFile(path);
+                    }
+
+                    final List<Path> productSalesFilesPath = paths.stream().filter(e -> e.getFileName().toString().contains(FileNameConstants.PRODUCT_SALES)).collect(Collectors.toList());
+                    for (Path path : productSalesFilesPath) {
                         fileParser.parseFile(path);
                     }
                 }

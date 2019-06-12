@@ -8,7 +8,9 @@ public class FileNameConstants {
     static final String PRODUCT_REFERENCE = "productreference";
     static final String PRODUCT_SECONDARY = "productsecondary";
     static final String PRODUCT_FEATURE = "productfeature";
+    static final String PRODUCT_PRICE = "pricing_";
     static final String CLASS_ATTRIBUTE_ASSIGNMENT = "class_attribute_assignment";
+    static final String PRODUCT_SALES = "productsales";
 
     //files to add without filtering
     static final String COLOR_ENUM = "colorenum";
